@@ -4,6 +4,10 @@
  file.  Doesn't actually decompress the image
 
  Barry Pederson <bp@barryp.org>
+ 
+ 2003-02-24  Altered to work with Mark Hammond's <mhammond@skippinet.com.au>
+             Exif module, by adding a getExif() method.
+             
 """
 import types
 
@@ -141,6 +145,20 @@ class JFIF:
             else:
                 count += 4 + len(s[1])
         return count        
+        
+        
+    def getExif(self):
+        """
+        Look for an Exif segment, and return as 
+        an Exif object.  If no segment is found, 
+        an empty Exif object is returned.
+        
+        """
+        import exif
+        for s in self._segments:
+            if s[0] == APP_1 and s[1][:5]=="Exif\0":
+                return exif.Exif(s[1][6:])
+        return exif.Exif()
         
         
     def getMD5(self):
